@@ -1,0 +1,33 @@
+[package]
+name = "soroban-groth16-verifier-contract"
+version = "0.0.0"
+edition = "2021"
+publish = false
+
+[lib]
+crate-type = ["cdylib"]
+doctest = false
+
+[dependencies]
+soroban-sdk = { version = "22.0.1" }
+
+[dev-dependencies]
+soroban-sdk = { version = "22.0.1", features = ["testutils"] }
+ark-bls12-381 = { version = "0.4.0"}
+ark-serialize = { version = "0.4.2"}
+ark-ff = { version = "0.4.2"}
+ark-ec = { version = "0.4.2"}
+
+[profile.release]
+opt-level = "z"
+overflow-checks = true
+debug = 0
+strip = "symbols"
+debug-assertions = false
+panic = "abort"
+codegen-units = 1
+lto = true
+
+[profile.release-with-logs]
+inherits = "release"
+debug-assertions = true
