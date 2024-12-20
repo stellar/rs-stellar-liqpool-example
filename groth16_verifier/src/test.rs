@@ -3,22 +3,22 @@ extern crate std;
 
 use ark_bls12_381::{Fq, Fq2};
 use ark_serialize::CanonicalSerialize;
+use core::str::FromStr;
 use soroban_sdk::{
     crypto::bls12_381::{Fr, G1Affine, G2Affine},
-    Env, Vec, U256, 
+    Env, Vec, U256,
 };
-use core::str::FromStr;
 
 use crate::{Groth16Verifier, Groth16VerifierClient, Proof, VerificationKey};
 
-fn g1_from_coords(env: &Env, x: &str, y: &str) -> G1Affine {    
+fn g1_from_coords(env: &Env, x: &str, y: &str) -> G1Affine {
     let ark_g1 = ark_bls12_381::G1Affine::new(Fq::from_str(x).unwrap(), Fq::from_str(y).unwrap());
     let mut buf = [0u8; 96];
     ark_g1.serialize_uncompressed(&mut buf[..]).unwrap();
     G1Affine::from_array(env, &buf)
 }
 
-fn neg_g1_from_coords(env: &Env, x: &str, y: &str) -> G1Affine {    
+fn neg_g1_from_coords(env: &Env, x: &str, y: &str) -> G1Affine {
     let ark_g1 = ark_bls12_381::G1Affine::new(Fq::from_str(x).unwrap(), -Fq::from_str(y).unwrap());
     let mut buf = [0u8; 96];
     ark_g1.serialize_uncompressed(&mut buf[..]).unwrap();
@@ -65,17 +65,21 @@ fn test() {
     let ic0y = "3455508165409829148751617737772894557887792278044850553785496869183933597103951941805834639972489587640583544390358";
 
     let ic1x = "2645559270376031734407122278942646687260452979296081924477586893972449945444985371392950465676350735694002713633589";
-    let ic1y = "2241039659097418315097403108596818813895651201896886552939297756980670248638746432560267634304593609165964274111037";    
+    let ic1y = "2241039659097418315097403108596818813895651201896886552939297756980670248638746432560267634304593609165964274111037";
 
-    
     let vk = VerificationKey {
         alpha: g1_from_coords(&env, alphax, alphay).to_bytes(),
         beta: g2_from_coords(&env, betax1, betax2, betay1, betay2).to_bytes(),
         gamma: g2_from_coords(&env, gammax1, gammax2, gammay1, gammay2).to_bytes(),
         delta: g2_from_coords(&env, deltax1, deltax2, deltay1, deltay2).to_bytes(),
-        ic: Vec::from_array(&env, [g1_from_coords(&env, ic0x, ic0y).to_bytes(), g1_from_coords(&env, ic1x, ic1y).to_bytes()])
+        ic: Vec::from_array(
+            &env,
+            [
+                g1_from_coords(&env, ic0x, ic0y).to_bytes(),
+                g1_from_coords(&env, ic1x, ic1y).to_bytes(),
+            ],
+        ),
     };
-
 
     let pi_ax =   "314442236668110257304682488877371582255161413673331360366570443799415414639292047869143313601702131653514009114222";
     let pi_ay =  "2384632327855835824635705027009217874826122107057894594162233214798350178691568018290025994699762298534539543934607";
@@ -96,8 +100,8 @@ fn test() {
     let output = Vec::from_array(&env, [Fr::from_u256(U256::from_u32(&env, 33))]);
 
     let client = create_client(&env);
-    env.budget().reset_default();    
-    let res= client.verify_proof(&vk, &proof, &output);
+    env.budget().reset_default();
+    let res = client.verify_proof(&vk, &proof, &output);
     assert_eq!(res, true);
     env.budget().print();
 }
