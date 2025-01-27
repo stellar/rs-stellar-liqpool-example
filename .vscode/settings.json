@@ -2,4 +2,8 @@
     // These settings exist to support the gitpod configuration.
     "workbench.startupEditor": "none",
     "rust-analyzer.cargo.buildScripts.useRustcWrapper": false,
+    // This setting exists to ensure the fuzzing tests are covered by the rust-analyzer
+    "rust-analyzer.linkedProjects": [
+        "./fuzzing/fuzz/Cargo.toml"
+    ]
 }
