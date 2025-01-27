@@ -1,4 +1,5 @@
 target/
+test_snapshots/
 /.sccache/
 .DS_Store
 .soroban
