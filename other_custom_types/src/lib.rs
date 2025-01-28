@@ -199,4 +199,18 @@ impl CustomTypesContract {
     pub fn tuple_strukt(_env: Env, tuple_strukt: TupleStruct) -> TupleStruct {
         tuple_strukt
     }
+
+    pub fn get_object_vec_option(env: Env) -> Option<Vec<Test>> {
+        let obj: Test = Test {
+            a: 1,
+            b: true,
+            c: symbol_short!("hi"),
+        };
+        let obj2: Test = Test {
+            a: 2,
+            b: false,
+            c: symbol_short!("hello"),
+        };
+        Some(Vec::from_array(&env, [obj, obj2]))
+    }
 }
