@@ -1,0 +1,16 @@
+dev_dependencies = { soroban-sdk = { workspace = true } }
+[package]
+name = "soroban-decrement-contract"
+version = "0.0.0"
+edition = "2021"
+publish = false
+
+[lib]
+crate-type = ["cdylib"]
+doctest = false
+
+[dependencies]
+soroban-sdk = { workspace = true }
+
+[dev-dependencies]
+soroban-sdk = { version = "20.3.1", features = ["testutils"] }
